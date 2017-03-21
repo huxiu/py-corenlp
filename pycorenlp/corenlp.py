@@ -7,7 +7,7 @@ class StanfordCoreNLP:
             server_url = server_url[:-1]
         self.server_url = server_url
 
-    def annotate(self, text, properties=None):
+    def annotate(self, text, properties=None, iszh=False):
         assert isinstance(text, str)
         if properties is None:
             properties = {}
@@ -23,9 +23,13 @@ class StanfordCoreNLP:
             '$ java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer')
 
         data = text.encode()
+        pipelineLanguage=""
+        if iszh:
+            pipelineLanguage = "zh"
         r = requests.post(
             self.server_url, params={
-                'properties': str(properties)
+                'properties': str(properties),
+                'pipelineLanguage': pipelineLanguage,
             }, data=data, headers={'Connection': 'close'})
         output = r.text
         if ('outputFormat' in properties
